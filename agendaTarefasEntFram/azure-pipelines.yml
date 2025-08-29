@@ -11,38 +11,41 @@ variables:
 stages:
   - stage: Build
     displayName: 'Build & Test'
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
-      - job: Build
+      - job: BuildJob
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: sdk
+              version: '8.x'
           - task: DotNetCoreCLI@2
             displayName: 'Restore dependencies'
             inputs:
-              command: 'restore'
+              command: restore
               projects: '**/*.csproj'
           - task: DotNetCoreCLI@2
             displayName: 'Build solution'
             inputs:
-              command: 'build'
-              projects: '**/*.csproj'
+              command: build
               arguments: '--configuration $(buildConfiguration)'
           - task: DotNetCoreCLI@2
             displayName: 'Run unit tests'
             inputs:
-              command: 'test'
+              command: test
               projects: '**/*Tests.Unit.csproj'
               arguments: '--configuration $(buildConfiguration)'
           - task: DotNetCoreCLI@2
             displayName: 'Run integration tests'
             inputs:
-              command: 'test'
+              command: test
               projects: '**/*Tests.Integration.csproj'
               arguments: '--configuration $(buildConfiguration)'
           - task: DotNetCoreCLI@2
             displayName: 'Publish Web API project'
             inputs:
-              command: 'publish'
+              command: publish
               projects: 'AgendaTarefas.csproj'
               arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/publish'
           - task: PublishBuildArtifacts@1
@@ -51,33 +54,16 @@ stages:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)/publish'
               ArtifactName: 'drop'
 
-  - stage: Dev
-    displayName: 'Deploy to Dev'
-    dependsOn: Build
-    variables:
-      - group: DevVariables
-    jobs:
-      - job: DeployDev
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - download: current
-            artifact: drop
-          - script: echo "Deploy to Dev using $(DevWebApp) on subscription $(DevSubscription)"
-          # aqui colocaria sua task real de deploy (ex: AzureWebApp@1)
+  - template: .template/stage-template.yml
+    parameters:
+      stageName: Dev
+      variableGroup: DevVariables
+      azureSubscription: $(DevSubscription)
+      azureWebAppName: $(DevWebApp)
 
-  - stage: Prod
-    displayName: 'Deploy to Prod'
-    dependsOn: Dev
-    condition: succeeded()
-    variables:
-      - group: ProdVariables
-    jobs:
-      - job: DeployProd
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - download: current
-            artifact: drop
-          - script: echo "Deploy to Prod using $(ProdWebApp) on subscription $(ProdSubscription)"
-          # task real de deploy, com aprovação manual via environment configurado no DevOps
+  - template: .template/stage-template.yml
+    parameters:
+      stageName: Prod
+      variableGroup: ProdVariables
+      azureSubscription: $(ProdSubscription)
+      azureWebAppName: $(ProdWebApp)
