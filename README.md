@@ -8,11 +8,11 @@
 ---
 
 
-AgendaTarefas — README (detalhado)
+**AgendaTarefas — README (detalhado)**
 
-Este README.md explica cada arquivo gerado no projeto, sua funcionalidade, e dá um passo-a-passo didático para rodar localmente, executar migrations, rodar testes (unitários e de integração) e configurar CI/CD (Azure Pipelines com estágios Dev/Prod). Também inclui dicas de troubleshooting e referências oficiais.
+**Este README.md** explica cada arquivo gerado no projeto, sua funcionalidade, e dá um passo-a-passo didático para rodar localmente, executar migrations, rodar testes (unitários e de integração) e configurar CI/CD (Azure Pipelines com estágios Dev/Prod). Também inclui dicas de troubleshooting e referências oficiais.
 
-> Nota rápida: este projeto usa .NET 8, Entity Framework Core com SQLite, xUnit para testes e Azure Pipelines (YAML) para CI/CD. Para testes de integração usamos WebApplicationFactory<TEntryPoint> (o Program do projeto deve ser partial para compatibilidade com o factory — veja seção Pronto para testes de integração).
+> **Nota rápida:** este projeto usa .NET 8, Entity Framework Core com SQLite, xUnit para testes e Azure Pipelines (YAML) para CI/CD. Para testes de integração usamos WebApplicationFactory<TEntryPoint> (o Program do projeto deve ser partial para compatibilidade com o factory — veja seção Pronto para testes de integração).
 Documentação oficial importante citada ao longo do README: EF Migrations, EF SQLite provider, Azure Pipelines multistage e templates, AzureWebApp task, WebApplicationFactory e xUnit. 
 
 
@@ -20,29 +20,29 @@ Documentação oficial importante citada ao longo do README: EF Migrations, EF S
 
 ---
 
-Sumário rápido
+**Sumário rápido**
 
-Arquivos principais: AgendaTarefas.csproj, Program.cs, appsettings.json, AppDbContext.cs
+**Arquivos principais:** AgendaTarefas.csproj, Program.cs, appsettings.json, AppDbContext.cs
 
-Migrations: 20250829_InitialCreate.cs, AgendaTarefasModelSnapshot.cs
+**Migrations:** 20250829_InitialCreate.cs, AgendaTarefasModelSnapshot.cs
 
-Debug: launchSettings.json
+**Debug:** launchSettings.json
 
-CI/CD: azure-pipelines.yml, .template/variables-template.yml, .template/stage-template.yml
+**CI/CD:** azure-pipelines.yml, .template/variables-template.yml, .template/stage-template.yml
 
-Testes: TarefaServiceTests.cs (unit), TarefaControllerIntegrationTests.cs (integration)
+**Testes:** TarefaServiceTests.cs (unit), TarefaControllerIntegrationTests.cs (integration)
 
 
 
 ---
 
-O que cada arquivo faz (explicação detalhada)
+**O que cada arquivo faz (explicação detalhada)**
 
-> Cada item abaixo descreve função e comportamento esperado do arquivo.
+> **Cada item abaixo descreve função e comportamento esperado do arquivo.**
 
 
 
-AgendaTarefas.csproj
+**AgendaTarefas.csproj**
 
 Arquivo de projeto (.NET SDK).
 
@@ -51,7 +51,7 @@ Define TargetFramework (net8.0), Nullable, ImplicitUsings e as dependências NuG
 Quando você rodar dotnet restore o NuGet instalará os pacotes citados aqui.
 
 
-Program.cs
+**Program.cs**
 
 Ponto de entrada da aplicação (.NET 8 minimal hosting).
 
@@ -71,7 +71,7 @@ Mapeia controllers com app.MapControllers() e roda a aplicação com app.Run().
 Importante para testes de integração: adicione public partial class Program { } (ver seção Pronto para testes de integração). A documentação sobre testes com WebApplicationFactory recomenda que o Program seja detectável como entrypoint. 
 
 
-appsettings.json
+**appsettings.json**
 
 Configurações da aplicação (em especial ConnectionStrings).
 
@@ -82,7 +82,7 @@ Em desenvolvimento você pode sobrepor com appsettings.Development.json (não co
 Quando rodar, o DB SQLite será criado no arquivo agendaTarefas.db na pasta do projeto (se ainda não existir).
 
 
-Data/AppDbContext.cs
+**Data/AppDbContext.cs**
 
 Classe AppDbContext : DbContext.
 
@@ -93,7 +93,7 @@ Em OnModelCreating define constraints (ex.: Titulo required, MaxLength) e a conv
 É a peça central usada pelo EF para criar queries, migrations e persistência.
 
 
-Data/Migrations/20250829_InitialCreate.cs
+**Data/Migrations/20250829_InitialCreate.cs**
 
 Migration inicial (arquivo Migration gerado manualmente neste projeto).
 
@@ -104,7 +104,7 @@ Down — reverte a criação (drop table).
 Observação: em um fluxo típico você geraria essa migration localmente com dotnet ef migrations add InitialCreate (ou usaria o arquivo já incluído aqui). A funcionalidade Migrations do EF permite evoluir o schema do DB conforme o modelo muda. 
 
 
-Data/Migrations/AgendaTarefasModelSnapshot.cs
+**Data/Migrations/AgendaTarefasModelSnapshot.cs**
 
 Model snapshot (usado pelo EF para comparar modelo atual vs. último snapshot — base para gerar novas migrations).
 
@@ -113,7 +113,7 @@ Representa a “imagem” do modelo naquele momento.
 Mantê-lo no repositório ajuda equipes a versionarem o histórico de schema.
 
 
-Properties/launchSettings.json
+**Properties/launchSettings.json**
 
 Config de execução local (Visual Studio / dotnet run).
 
@@ -122,7 +122,7 @@ Define URLs locais (https://localhost:5001;http://localhost:5000) e a variável 
 É útil durante desenvolvimento para abrir automaticamente o browser com a URL correta.
 
 
-azure-pipelines.yml (na raiz)
+**azure-pipelines.yml (na raiz)**
 
 Pipeline multistage (CI + CD):
 
@@ -135,14 +135,14 @@ Stage Dev/Prod: fazem deploy (via template .template/stage-template.yml) usando 
 Observação: um azure-pipelines.yml no root do repo é a prática padrão para Azure DevOps — o serviço procura lá por padrão. Multistage pipelines e templates são a forma recomendada de organizar CI/CD no Azure DevOps. 
 
 
-.template/variables-template.yml
+**.template/variables-template.yml**
 
 Template YAML com variáveis comuns (ex.: vmImage).
 
 Utilizado pelo pipeline principal para centralizar valores reutilizáveis (evita duplicação).
 
 
-.template/stage-template.yml
+**.template/stage-template.yml**
 
 Template que define um stage parametrizável (usado para Dev e Prod).
 
@@ -162,7 +162,7 @@ Implementa um deployment job que baixa artefato e usa a task AzureWebApp@1 para 
 Usa environment: <stageName> para associar o deployment a um Environment do Azure DevOps — isso permite configurar approvers/checks via UI. 
 
 
-Tests/AgendaTarefas.Tests.Unit/TarefaServiceTests.cs
+**Tests/AgendaTarefas.Tests.Unit/TarefaServiceTests.cs**
 
 Unit tests (xUnit) cobrindo a camada TarefaService.
 
@@ -171,7 +171,7 @@ Usa mocks (ex.: Moq) no repositório para isolar a lógica de negócio e validar
 Executa via dotnet test <project> ou dotnet test --filter Category=Unit.
 
 
-Tests/AgendaTarefas.Tests.Integration/TarefaControllerIntegrationTests.cs
+**Tests/AgendaTarefas.Tests.Integration/TarefaControllerIntegrationTests.cs**
 
 Testes de integração (xUnit + WebApplicationFactory<Program>).
 
@@ -183,39 +183,39 @@ Requer que o Program seja detectável (ver Pronto para testes de integração).
 
 ---
 
-Passo-a-passo para rodar localmente (didático, linha-a-linha)
+**Passo-a-passo para rodar localmente (didático, linha-a-linha)**
 
-1) Pré-requisitos (instalar)
+**1) Pré-requisitos (instalar)**
 
 1. .NET 8 SDK (verifique com dotnet --version — deve ser >= 8.0).
 
 
-2. (Opcional) dotnet-ef CLI para manipular migrations:
+**2. (Opcional) dotnet-ef CLI para manipular migrations:**
 
 dotnet tool install --global dotnet-ef
 
 ou, se já existe um dotnet-tools.json, dotnet tool restore. (EF CLI docs). 
 
 
-3. Git (para clonar o repositório).
+**3. Git (para clonar o repositório).**
 
 
-4. (Opcional) SQLite browser/DB client se quiser inspecionar o arquivo .db.
+**4. (Opcional) SQLite browser/DB client se quiser inspecionar o arquivo .db.**
 
 
 
 
 ---
 
-2) Clonar o repositório
+**2) Clonar o repositório**
 
-git clone https://github.com/Santosdevbjj/agendaTarefasEntFram.git
+git clone https://github.com/Santosdevbjj/agendaTarefasEntFram
 cd agendaTarefasEntFram
 
 
 ---
 
-3) Restaurar e build
+**3) Restaurar e build**
 
 dotnet restore
 dotnet build --configuration Release
@@ -223,31 +223,31 @@ dotnet build --configuration Release
 
 ---
 
-4) (Opcional) Gerar migrations localmente
+**4) (Opcional) Gerar migrations localmente**
 
 Se você quiser gerar a migration em seu ambiente (recomendado em times, para timestamps locais), execute:
 
 dotnet ef migrations add InitialCreate
 
-> Caso você já tenha a migration Data/Migrations/20250829_InitialCreate.cs incluída, pode pular esse passo. A documentação de Migrations do EF explica as melhores práticas. 
+> Caso você já tenha a migration **Data/Migrations/20250829_InitialCreate.cs** incluída, pode pular esse passo. A documentação de Migrations do EF explica as melhores práticas. 
 
 
 
 
 ---
 
-5) Aplicar migrations (criar ou atualizar o DB)
+**5) Aplicar migrations (criar ou atualizar o DB)**
 
 Use a migration existente ou gerada para criar o banco SQLite:
 
-dotnet ef database update
+**dotnet ef database update**
 
-Isso criará (ou atualizará) o arquivo agendaTarefas.db usando o script Up() das migrations. Para produção, considere gerar scripts SQL revisáveis (opção no EF) antes de aplicar a DB em produção. 
+Isso criará (ou atualizará) o arquivo **agendaTarefas.db** usando o script Up() das migrations. Para produção, considere gerar scripts SQL revisáveis (opção no EF) antes de aplicar a DB em produção. 
 
 
 ---
 
-6) Rodar a API localmente
+**6) Rodar a API localmente**
 
 dotnet run --project AgendaTarefas.csproj
 
@@ -259,7 +259,7 @@ Abra https://localhost:5001/swagger/index.html para acessar a documentação Swa
 
 ---
 
-7) Testes Unitários e de Integração (local)
+**7) Testes Unitários e de Integração (local)**
 
 Unit tests
 
@@ -269,14 +269,14 @@ Integration tests
 
 dotnet test ./Tests/AgendaTarefas.Tests.Integration/AgendaTarefas.Tests.Integration.csproj --configuration Release
 
-> Observação: Integration tests usam WebApplicationFactory<Program> e criarão um servidor in-memory. Certifique-se de que o Program seja partial (veja próximo ponto). 
+> **Observação:** Integration tests usam WebApplicationFactory<Program> e criarão um servidor in-memory. Certifique-se de que o Program seja partial (veja próximo ponto). 
 
 
 
 
 ---
 
-8) Pronto para testes de integração — alteração necessária
+**8) Pronto para testes de integração — alteração necessária**
 
 Para o WebApplicationFactory<Program> encontrar o entrypoint, adicione no final do seu Program.cs:
 
@@ -288,7 +288,7 @@ Isso permite que WebApplicationFactory<Program> crie a aplicação de teste usan
 
 ---
 
-CI/CD (Azure Pipelines) — como usar o template / configuração
+**CI/CD (Azure Pipelines) — como usar o template / configuração**
 
 Onde colocar os arquivos
 
@@ -297,48 +297,48 @@ Coloque azure-pipelines.yml na raiz do repositório (padrão do Azure DevOps).
 Mantenha .template/variables-template.yml e .template/stage-template.yml na pasta .template/ (ou ajuste o path se preferir). A documentação de templates mostra como reutilizar stages e parâmetros. 
 
 
-O que configurar no Azure DevOps (passo-a-passo)
+**O que configurar no Azure DevOps (passo-a-passo)**
 
-1. Service connection (Project Settings → Service connections): configure a conexão à sua assinatura Azure (usada pelo AzureWebApp@1 para fazer deploy).
-
-
-2. Variable Groups (Pipelines → Library): crie DevVariables e ProdVariables com variáveis sensíveis (ex.: DevWebApp, DevSubscription, DevConnectionString, ProdWebApp, ProdSubscription etc.). Marque “Allow access to all pipelines” se apropriado. 
+**1. Service connection (Project Settings → Service connections):** configure a conexão à sua assinatura Azure (usada pelo AzureWebApp@1 para fazer deploy).
 
 
-3. Environments (Pipelines → Environments): crie Dev e Prod (mesmos nomes usados no template). Em Prod adicione Approvals & checks (pessoas ou grupos aprovadores) para exigir aprovação manual antes de rodar o stage de produção. 
+**2. Variable Groups (Pipelines → Library):** crie DevVariables e ProdVariables com variáveis sensíveis (ex.: DevWebApp, DevSubscription, DevConnectionString, ProdWebApp, ProdSubscription etc.). Marque “Allow access to all pipelines” se apropriado. 
 
 
-4. Commit do azure-pipelines.yml e observe o pipeline.
+**3. Environments (Pipelines → Environments):** crie Dev e Prod (mesmos nomes usados no template). Em Prod adicione Approvals & checks (pessoas ou grupos aprovadores) para exigir aprovação manual antes de rodar o stage de produção. 
 
 
-
-Como o pipeline funciona (visão geral)
-
-Build: compila, roda testes unitários e de integração, publica artefato (drop).
-
-Dev stage: baixa o artifact e faz deploy automático ao App Service do Dev.
-
-Prod stage: depende de Dev; rodará apenas se Build/Dev tiverem sucesso e (se habilitado) após aprovação manual (via Environment checks). O deploy é feito com a task AzureWebApp@1. 
+**4. Commit do azure-pipelines.yml e observe o pipeline.**
 
 
 
----
+**Como o pipeline funciona (visão geral)**
 
-Notas técnicas e troubleshooting (erros comuns)
+**Build:** compila, roda testes unitários e de integração, publica artefato (drop).
 
-“dotnet ef migrations add” falha: verifique se o projeto compila (dotnet build) e se Microsoft.EntityFrameworkCore.Design está instalado; se o DbContext está em outro projeto, use os parâmetros --project e --startup-project. (Docs EF CLI). 
+**Dev stage:** baixa o artifact e faz deploy automático ao App Service do Dev.
 
-SQLite e limitações: SQLite tem limitações (algumas operações DDL não suportadas, tipos como DateTimeOffset podem ter problemas). Em caso de migrations complexas, EF pode precisar recriar tabelas; avalie esses impactos para produção. Use SQLite para desenvolvimento/testes; em produção, prefira SQL Server/Azure SQL se precisar de features avançadas. 
-
-Deploy via AzureWebApp@1: verifique o azureSubscription (service connection) tem as permissões corretas e que o appName existe. Logs do task mostram causas de falha. 
-
-Aprovações não aparecendo: confira se você criou o Environment com o mesmo nome usado no environment: do YAML e se adicionou Approvals and checks. 
+**Prod stage:** depende de Dev; rodará apenas se Build/Dev tiverem sucesso e (se habilitado) após aprovação manual (via Environment checks). O deploy é feito com a task AzureWebApp@1. 
 
 
 
 ---
 
-Sugestões de boas práticas aplicáveis aqui
+**Notas técnicas e troubleshooting (erros comuns)**
+
+**“dotnet ef migrations add” falha:** verifique se o projeto compila (dotnet build) e se Microsoft.EntityFrameworkCore.Design está instalado; se o DbContext está em outro projeto, use os parâmetros --project e --startup-project. (Docs EF CLI). 
+
+**SQLite e limitações:** SQLite tem limitações (algumas operações DDL não suportadas, tipos como DateTimeOffset podem ter problemas). Em caso de migrations complexas, EF pode precisar recriar tabelas; avalie esses impactos para produção. Use SQLite para desenvolvimento/testes; em produção, prefira SQL Server/Azure SQL se precisar de features avançadas. 
+
+**Deploy via AzureWebApp@1:** verifique o azureSubscription (service connection) tem as permissões corretas e que o appName existe. Logs do task mostram causas de falha. 
+
+**Aprovações não aparecendo:** confira se você criou o Environment com o mesmo nome usado no environment: do YAML e se adicionou Approvals and checks. 
+
+
+
+---
+
+**Sugestões de boas práticas aplicáveis aqui**
 
 Versione as migrations no Git e coordene alterações entre a equipe (merge conflicts em migrations podem acontecer). 
 
@@ -350,7 +350,7 @@ Proteja secrets com Variable Groups e Key Vault (se possível).
 
 ---
 
-Referências (documentação oficial e leituras recomendadas)
+**Referências (documentação oficial e leituras recomendadas)**
 
 EF Core — Migrations (overview). 
 
@@ -376,7 +376,7 @@ xUnit official site (test runner and docs).
 
 ---
 
-Final — checklist prático (para rodar em ordem)
+**Final — checklist prático (para rodar em ordem)**
 
 1. Instalar .NET 8 e dotnet-ef (se necessário).
 
