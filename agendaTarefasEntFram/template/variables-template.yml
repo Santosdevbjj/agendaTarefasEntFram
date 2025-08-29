@@ -1,0 +1,3 @@
+variables:
+  devVmImage: 'ubuntu-latest'
+  prodVmImage: 'ubuntu-latest'
