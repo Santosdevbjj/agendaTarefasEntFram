@@ -3,51 +3,36 @@ parameters:
     type: string
   - name: variableGroup
     type: string
-  - name: azureWebAppName
-    type: string
   - name: azureSubscription
+    type: string
+  - name: azureWebAppName
     type: string
 
 stages:
-  - stage: ${{ parameters.stageName }}
+- stage: ${{ parameters.stageName }}
+  displayName: Deploy to ${{ parameters.stageName }}
+  dependsOn: Build
+  variables:
+    - group: ${{ parameters.variableGroup }}
+
+  jobs:
+  - deployment: DeployJob
     displayName: Deploy to ${{ parameters.stageName }}
-    variables:
-      - group: ${{ parameters.variableGroup }}
-
-    jobs:
-      - job: Build
-        displayName: Build
-        pool:
-          vmImage: ${{ variables[ '${{ parameters.stageName.ToLower() }}VmImage' ] }}
-        steps:
-          - task: UseDotNet@2
-            inputs:
-              packageType: sdk
-              version: '8.x'
-          - script: dotnet restore
-          - script: dotnet build --configuration Release
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)'
-              artifactName: 'drop'
-
-      - deployment: DeployJob
-        displayName: Deploy to ${{ parameters.stageName }}
-        environment: ${{ parameters.stageName }}  # associa a Environment para habilitar aprovações antecipadas
-        pool:
-          vmImage: ${{ variables[ '${{ parameters.stageName.ToLower() }}VmImage' ] }}
-        strategy:
-          runOnce:
-            preDeploy:
-              steps:
-                - script: echo "Preparing deployment to ${{ parameters.stageName }}"
-            deploy:
-              steps:
-                - download: current
-                  artifact: drop
-                - task: AzureWebApp@1
-                  inputs:
-                    azureSubscription: ${{ parameters.azureSubscription }}
-                    appType: webApp
-                    appName: ${{ parameters.azureWebAppName }}
-                    package: '$(Pipeline.Workspace)/drop/**/*.zip'
+    environment: ${{ parameters.stageName }}
+    pool:
+      vmImage: ${{ variables.vmImage }}
+    strategy:
+      runOnce:
+        preDeploy:
+          steps:
+            - script: echo "Preparing deployment to ${{ parameters.stageName }}"
+        deploy:
+          steps:
+            - download: current
+              artifact: drop
+            - task: AzureWebApp@1
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                appType: webApp
+                appName: ${{ parameters.azureWebAppName }}
+                package: '$(Pipeline.Workspace)/drop/**/*.zip'
