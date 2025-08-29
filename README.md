@@ -12,7 +12,10 @@
 
 **Este README.md** explica cada arquivo gerado no projeto, sua funcionalidade, e dá um passo-a-passo didático para rodar localmente, executar migrations, rodar testes (unitários e de integração) e configurar CI/CD (Azure Pipelines com estágios Dev/Prod). Também inclui dicas de troubleshooting e referências oficiais.
 
-> **Nota rápida:** este projeto usa .NET 8, Entity Framework Core com SQLite, xUnit para testes e Azure Pipelines (YAML) para CI/CD. Para testes de integração usamos WebApplicationFactory<TEntryPoint> (o Program do projeto deve ser partial para compatibilidade com o factory — veja seção Pronto para testes de integração).
+> **Nota rápida:** este projeto usa .NET 8, Entity Framework Core com SQLite, xUnit para testes e Azure Pipelines (YAML) para CI/CD.
+
+> Para testes de integração usamos WebApplicationFactory<TEntryPoint> (o Program do projeto deve ser partial para compatibilidade com o factory — veja seção Pronto para testes de integração).
+
 Documentação oficial importante citada ao longo do README: EF Migrations, EF SQLite provider, Azure Pipelines multistage e templates, AzureWebApp task, WebApplicationFactory e xUnit. 
 
 
