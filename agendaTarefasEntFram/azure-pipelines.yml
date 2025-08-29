@@ -49,3 +49,32 @@ steps:
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)/publish'
       ArtifactName: 'drop'
+
+
+
+trigger:
+  branches:
+    include:
+      - dev
+      - main
+
+variables:
+  - template: .template/variables-template.yml
+
+stages:
+  # Ambiente de Dev
+  - template: .template/stage-template.yml
+    parameters:
+      stageName: Dev
+      variableGroup: DevVariables
+      azureWebAppName: $(DevWebApp)
+      azureSubscription: $(DevSubscription)
+
+  # Ambiente de Produção (com approval)
+  - template: .template/stage-template.yml
+    parameters:
+      stageName: Prod
+      variableGroup: ProdVariables
+      azureWebAppName: $(ProdWebApp)
+      azureSubscription: $(ProdSubscription)
+      
